@@ -33,6 +33,7 @@ int execute_pipe(cmdLine* cmd){
                 perror("Error");
                 _exit(1);
             }
+            close(0);
 
         }
     }
@@ -44,6 +45,7 @@ int execute_pipe(cmdLine* cmd){
             perror("Error");
             _exit(1);
         }
+        close(1);
     }
 
 }
