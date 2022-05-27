@@ -24,11 +24,11 @@ int execute(cmdLine *cmd_line){
             return status;
         } else {  //child
             if(cmd_line->inputRedirect){
-                close(stdin);
+                close(STDIN_FILENO);
                 fopen(cmd_line->inputRedirect, "r");
             }
             if(cmd_line->outputRedirect){
-                close(stdout);
+                close(STDOUT_FILENO);
                 fopen(cmd_line->outputRedirect, "w");
             }
             if(execvp(cmd_line->arguments[0], cmd_line->arguments) < 0){
