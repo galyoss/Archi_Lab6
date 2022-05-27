@@ -48,6 +48,73 @@ int *rightPipe(int **pipes, cmdLine *pCmdLine){
 
 
 int execute_pipe(struct cmdLine* cmd){
+    int numPipes = countPipes(userInput);
+
+
+    int status;
+    int i = 0;
+    pid_t pid;
+
+    int pipefds[2*numPipes];
+
+    for(i = 0; i < (numPipes); i++){
+    if(pipe(pipefds + i*2) < 0) {
+    perror("couldn't pipe");
+    exit(EXIT_FAILURE);
+    }
+    }
+
+
+    int j = 0;
+    while(command) {
+    pid = fork();
+    if(pid == 0) {
+
+    //if not last command
+    if(command->next){
+    if(dup2(pipefds[j + 1], 1) < 0){
+    perror("dup2");
+    exit(EXIT_FAILURE);
+    }
+    }
+
+    //if not first command&& j!= 2*numPipes
+    if(j != 0 ){
+    if(dup2(pipefds[j-2], 0) < 0){
+    perror(" dup2");///j-2 0 j+1 1
+    exit(EXIT_FAILURE);
+
+    }
+    }
+
+
+    for(i = 0; i < 2*numPipes; i++){
+    close(pipefds[i]);
+    }
+
+    if( execvp(*command->arguments, command->arguments) < 0 ){
+    perror(*command->arguments);
+    exit(EXIT_FAILURE);
+    }
+    } else if(pid < 0){
+    perror("error");
+    exit(EXIT_FAILURE);
+    }
+
+    command = command->next;
+    j+=2;
+    }
+    /**Parent closes the pipes and wait for children*/
+
+    for(i = 0; i < 2 * numPipes; i++){
+    close(pipefds[i]);
+    }
+
+    for(i = 0; i < numPipes + 1; i++)
+    wait(&status);
+}
+/*
+int execute_pipe(struct cmdLine* cmd){
     cmdLine * cmdcopy = cmd;
     int total_commands = count_commands(cmdcopy);
     printf("\n%d total commands======\n", total_commands);
@@ -59,8 +126,7 @@ int execute_pipe(struct cmdLine* cmd){
 
         if( pid == 0 ){
             /* child gets input from the previous command,
-                if it's not the first command */
-            printf("CHILD. index: %d, before opening pipe input", index);
+                if it's not the first command
             if(index != 0){
                 printf("%d", pipes[(index-1)][0]);
                 close(STDIN_FILENO);
@@ -71,7 +137,7 @@ int execute_pipe(struct cmdLine* cmd){
             }
 
             /* child outputs to next command, if it's not
-                the last command */
+                the last command
             if(index!=(total_commands-1)){
                 close(STDOUT_FILENO);
                 if( dup(pipes[index][1]) < 0 ){
@@ -96,7 +162,7 @@ int execute_pipe(struct cmdLine* cmd){
 
     releasePipes(pipes, total_commands);
 }
-
+*/
 
 int execute_single(struct cmdLine* cmd){
     if(!cmd) {
