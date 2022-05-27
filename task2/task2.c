@@ -60,7 +60,7 @@ int execute_single(struct cmdLine* cmd){
         if(debug){
             fprintf(stderr, "PID num: %d, Executing command: %s\n", pid, cmd->arguments[0]);
         }
-        waitpid(pid, &status, (1 - cmd_line->blocking) | WUNTRACED);
+        waitpid(pid, &status, (1 - cmd->blocking) | WUNTRACED);
         freeCmdLines(cmd);
         return status;
     } else {  //child
