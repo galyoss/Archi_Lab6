@@ -54,6 +54,54 @@ int execute_pipe(cmdLine* cmd, int cmnds){
 
 }
 
+int count_commands(struct cmdLine* cmd){
+    int counter = 0;
+    while (cmd){
+        counter++;
+        cmd=cmd->next;
+    }
+    return counter;
+}
+
+int execute_pipe(struct cmdLine* cmd){
+    int total_commands = count_commands(cmd);
+    int** pipes = createPipes(total_commands-1);
+
+
+    int index = 0
+    while(cmd){
+        pid = fork()
+        if( pid == 0 ){
+            /* child gets input from the previous command,
+                if it's not the first command */
+            if(index != 0){
+                if( dup2(pipes[(index-1)][0], 0) < 0){
+                    perror("blabla");
+                }
+            }
+            /* child outputs to next command, if it's not
+                the last command */
+            if( not last command ){
+                if( dup2(pipefds[commandc*2+1], 1) < 0 ){
+                    perror and exit
+                }
+            }
+            close all pipe-fds
+            execvp
+            perror and exit
+        } else if( pid < 0 ){
+            perror and exit
+        }
+        cmd = cmd->next
+        commandc++
+    }
+
+/* parent closes all of its copies at the end */
+    for( i = 0; i < 2 * num-pipes; i++ ){
+        close( pipefds[i] );
+    }
+}
+
 int execute_single(struct cmdLine* cmd){
     if(!cmd_line) {
         printf("Error");
