@@ -5,6 +5,8 @@
 #include <sys/wait.h>
 #include "LineParser.h"
 
+#define BUFFER_SIZE 2048
+int debug = 0;
 
 int ** createPipes(int nPipes){
     int** pipes;
@@ -35,10 +37,6 @@ int *rightPipe(int **pipes, cmdLine *pCmdLine){
     return pipes[pCmdLine->idx];
 }
 
-
-
-#define BUFFER_SIZE 2048
-int debug = 0;
 
 int execute_pipe(cmdLine* cmd, int cmnds){
     // initiate a pipes array, each entry in the array is a pointer to a pipe

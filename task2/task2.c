@@ -5,8 +5,12 @@
 #include <sys/wait.h>
 #include "LineParser.h"
 
+#define BUFFER_SIZE 2048
+int debug = 0;
+
 int execute_pipe(cmdLine* cmd){
     int pipefd[2];
+    int status;
     pipe(pipefd);
     int ret_val;
     int pid1;
@@ -15,8 +19,8 @@ int execute_pipe(cmdLine* cmd){
     if (pid1){
         pid2 = fork();
         if (pid2){
-            waitpid(pid1, &status, (1 - cmd_line->blocking) | WUNTRACED);
-            waitpid(pid2, &status, (1 - cmd_line->blocking) | WUNTRACED);
+            waitpid(pid1, &status, (1 - cmd->blocking) | WUNTRACED);
+            waitpid(pid2, &status, (1 - cmd->blocking) | WUNTRACED);
         }
         else{
             //child 2 - read from child 1, writes to output
@@ -86,7 +90,7 @@ int execute(cmdLine *cmd_line){
     if (!cmd_line->next)
         execute_single(cmd_line);
     else
-        execute_pipe(cmd_line, cmnds);
+        execute_pipe(cmd_line);
 }
 
 int main(int argc, char **argv){
