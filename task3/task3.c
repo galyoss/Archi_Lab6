@@ -50,6 +50,7 @@ int *rightPipe(int **pipes, cmdLine *pCmdLine){
 int execute_pipe(struct cmdLine* cmd){
     cmdLine * cmdcopy = cmd;
     int total_commands = count_commands(cmdcopy);
+    printf("\n%d total commands======\n", total_commands);
     int** pipes = createPipes(total_commands-1);
     int index = 0;
     int pid;
@@ -59,6 +60,7 @@ int execute_pipe(struct cmdLine* cmd){
         if( pid == 0 ){
             /* child gets input from the previous command,
                 if it's not the first command */
+            printf("CHILD. index: %d, before opening pipe input", index);
             if(index != 0){
                 printf("%d", pipes[(index-1)][0]);
                 close(STDIN_FILENO);
