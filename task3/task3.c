@@ -20,6 +20,15 @@ int ** createPipes(int nPipes){
 
 }
 
+int count_commands(cmdLine* cmnd){
+    int counter = 0;
+    while (cmnd){
+        counter++;
+        cmnd = cmnd->next;
+    }
+    return counter;
+}
+
 void releasePipes(int **pipes, int nPipes){
     for (int i=0; i<nPipes;i++){
         free(pipes[i]);
@@ -121,14 +130,7 @@ int execute_single(struct cmdLine* cmd){
 }
 
 
-int count_commands(cmdLine* cmnd){
-    int counter = 0;
-    while (cmnd){
-        counter++;
-        cmnd = cmnd->next;
-    }
-    return counter;
-}
+
 
 int execute(cmdLine *cmd_line){
     /*
