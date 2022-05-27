@@ -16,6 +16,7 @@ void execute_pipe(cmdLine* cmd){
     int pid2;
     pid1 = fork();
     if (pid1){
+        close(pipefd[1]);
         pid2 = fork();
         if (pid2){
             if(cmd -> blocking){
@@ -24,7 +25,8 @@ void execute_pipe(cmdLine* cmd){
             if(cmd->next->blocking){
                 waitpid(pid2, &status, WUNTRACED);
             }
-
+            close(pipefd[0]);
+            close(pipefd[1]);
         }
         else{
             //child 2 - read from child 1, writes to output
@@ -42,7 +44,6 @@ void execute_pipe(cmdLine* cmd){
         }
     }
     else{ //chid 1
-        close(pipefd[0]);
         close(1);
         dup(pipefd[1]);
         close(pipefd[1]);
