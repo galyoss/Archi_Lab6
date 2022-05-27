@@ -48,7 +48,8 @@ int *rightPipe(int **pipes, cmdLine *pCmdLine){
 
 
 int execute_pipe(struct cmdLine* cmd){
-    int total_commands = count_commands(cmd);
+    cmdLine * cmdcopy = cmd;
+    int total_commands = count_commands(cmdcopy);
     int** pipes = createPipes(total_commands-1);
     int index = 0;
     int pid;
