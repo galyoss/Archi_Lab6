@@ -16,7 +16,7 @@ void execute_pipe(cmdLine* cmd){
     int pid2;
     pid1 = fork();
     if (pid1){
-        //close(pipefd[1]);
+        close(pipefd[1]);
         pid2 = fork();
         if (pid2){
             if(cmd -> blocking){
