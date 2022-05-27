@@ -89,8 +89,7 @@ int execute_pipe(struct cmdLine* cmd){
             perror("couldnt fork");
             _exit(1);
         }
-        close(pipes[index][0]);
-        close(pipes[index][1]);
+
         cmd = cmd->next;
         index++;
     }
