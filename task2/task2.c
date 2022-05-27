@@ -26,7 +26,7 @@ int execute_pipe(cmdLine* cmd){
             //child 2 - read from child 1, writes to output
             close(pipefd[1]);
             dup(pipefd[0]);
-            close(pipedf[0]);
+            close(pipefd[0]);
             cmd = cmd->next;
             if (execvp(cmd->arguments[0], cmd->arguments) < 0){
                 perror("Error");
@@ -47,7 +47,7 @@ int execute_pipe(cmdLine* cmd){
 }
 
 int execute_single(struct cmdLine* cmd){
-    if(!cmd_line) {
+    if(!cmd) {
         printf("Error");
         _exit(1);
     }
