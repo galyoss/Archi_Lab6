@@ -21,10 +21,10 @@ void execute_pipe(cmdLine* cmd){
         if (pid2){
             close(pipefd[0]);
             if(cmd -> blocking){
-                waitpid(pid1, &status1, WUNTRACED);
+                waitpid(pid1, &status, WUNTRACED);
             }
             if(cmd->next->blocking){
-                waitpid(pid2, &status2, WUNTRACED);
+                waitpid(pid2, &status, WUNTRACED);
             }
         }
         else{
