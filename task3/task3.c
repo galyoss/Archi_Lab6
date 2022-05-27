@@ -59,7 +59,7 @@ int execute_pipe(struct cmdLine* cmd){
                 if it's not the first command */
             if(index != 0){
                 close(STDIN_FILENO);
-                printf("%d", pipes[(index-1)][0]);
+                printf("======%d=======", pipes[(index-1)][0]);
                 if( dup(pipes[(index-1)][0]) < 0){
                     perror("no bueno");
                     _exit(1);
