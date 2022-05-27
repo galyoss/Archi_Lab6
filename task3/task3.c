@@ -54,13 +54,14 @@ int execute_pipe(struct cmdLine* cmd){
     int pid;
     while(cmd){
         pid = fork();
+
         if( pid == 0 ){
             /* child gets input from the previous command,
                 if it's not the first command */
             if(index != 0){
                 close(STDIN_FILENO);
                 if( dup(pipes[(index-1)][0]) < 0){
-                    perror("no bueno infile");
+                    perror("no bueno infile %d", pipes[(index-1)][0]);
                     _exit(1);
                 }
             }
