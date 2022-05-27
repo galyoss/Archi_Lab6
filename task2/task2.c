@@ -31,25 +31,27 @@ void execute_pipe(cmdLine* cmd){
             //child 2 - read from child 1, writes to output
             close(pipefd[1]);
             dup2(pipefd[0], 0);
+            close(0);
             close(pipefd[0]);
             cmd = cmd->next;
             if (execvp(cmd->arguments[0], cmd->arguments) < 0){
                 perror("Error");
                 _exit(1);
             }
-            close(0);
+
 
         }
     }
     else{ //chid 1
         close(pipefd[0]);
         dup2(pipefd[1],1);
+        close(1);
         close(pipefd[1]);
         if (execvp(cmd->arguments[0], cmd->arguments) < 0){
             perror("Error");
             _exit(1);
         }
-        close(1);
+
     }
 
 }
