@@ -20,10 +20,10 @@ void execute_pipe(cmdLine* cmd){
         pid2 = fork();
         if (pid2){
             close(pipefd[0]);
-            if(cmd_line -> blocking){
+            if(cmd -> blocking){
                 waitpid(pid1, &status1, WUNTRACED);
             }
-            if(cmd_line->next->blocking){
+            if(cmd->next->blocking){
                 waitpid(pid2, &status2, WUNTRACED);
             }
         }
