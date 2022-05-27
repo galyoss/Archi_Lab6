@@ -37,14 +37,6 @@ int *rightPipe(int **pipes, cmdLine *pCmdLine){
     return pipes[pCmdLine->idx];
 }
 
-int count_commands(struct cmdLine* cmd){
-    int counter = 0;
-    while (cmd){
-        counter++;
-        cmd=cmd->next;
-    }
-    return counter;
-}
 
 int execute_pipe(struct cmdLine* cmd){
     int total_commands = count_commands(cmd);
