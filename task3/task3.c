@@ -37,23 +37,6 @@ int *rightPipe(int **pipes, cmdLine *pCmdLine){
     return pipes[pCmdLine->idx];
 }
 
-
-int execute_pipe(cmdLine* cmd, int cmnds){
-    // initiate a pipes array, each entry in the array is a pointer to a pipe
-    int* pipes_array[cmnds-1];
-    int i;
-    for (i=0;i<cmnds-1;i++){
-        int fd[2];
-        pipes_array[i] = fd;
-        pipe(pipes_array[i]);
-    }
-
-    for (int i=0;i<cmnds;i++){
-
-    }
-
-}
-
 int count_commands(struct cmdLine* cmd){
     int counter = 0;
     while (cmd){
@@ -66,40 +49,46 @@ int count_commands(struct cmdLine* cmd){
 int execute_pipe(struct cmdLine* cmd){
     int total_commands = count_commands(cmd);
     int** pipes = createPipes(total_commands-1);
-
-
-    int index = 0
+    int index = 0;
     while(cmd){
-        pid = fork()
+        pid = fork();
         if( pid == 0 ){
             /* child gets input from the previous command,
                 if it's not the first command */
             if(index != 0){
-                if( dup2(pipes[(index-1)][0], 0) < 0){
-                    perror("blabla");
+                close(STDIN_FILENO);
+                if( dup(pipes[(index-1)][0]) < 0){
+                    perror("no bueno");
+                    _exit(1);
                 }
             }
+
             /* child outputs to next command, if it's not
                 the last command */
-            if( not last command ){
-                if( dup2(pipefds[commandc*2+1], 1) < 0 ){
-                    perror and exit
+            if(index!=total_commands-1){
+                close(STDOUT_FILENO);
+                if( dup(pipes[index][1]) < 0 ){
+                    perror("no bueno");
+                    _exit(1);
                 }
             }
-            close all pipe-fds
-            execvp
-            perror and exit
+
+            if (execvp(cmd->arguments[0], cmd->arguments) < 0){
+                perror("no no no");
+                _exit(1);
+            }
+
         } else if( pid < 0 ){
-            perror and exit
+            perror("couldnt fork");
+            _exit(1);
         }
+        close(pipes[index][0]);
+        close(pipes[index][1]);
         cmd = cmd->next
-        commandc++
+        index++
     }
 
-/* parent closes all of its copies at the end */
-    for( i = 0; i < 2 * num-pipes; i++ ){
-        close( pipefds[i] );
-    }
+    releasePipes(pipes, total_commands);
 }
 
 int execute_single(struct cmdLine* cmd){
@@ -152,11 +141,10 @@ int execute(cmdLine *cmd_line){
      true? create pipe ; create a child: give it the pipe, close input, redirect output, run the command, close output
      second child: redirect input, close output, run command;
      */
-    int cmnds = count_commands(cmd_line);
-    if (cmnds == 1)
+    if (!cmd_line->next)
         execute_single(cmd_line);
     else
-        execute_pipe(cmd_line, cmnds);
+        execute_pipe(cmd_line);
 }
 
 int main(int argc, char **argv){
