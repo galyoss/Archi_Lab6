@@ -29,8 +29,8 @@ void execute_pipe(cmdLine* cmd){
         else{
             //child 2 - read from child 1, writes to output
             close(pipefd[1]);
-            dup2(pipefd[0], 0);
             close(0);
+            dup(pipefd[0]);
             close(pipefd[0]);
             cmd = cmd->next;
             if (execvp(cmd->arguments[0], cmd->arguments) < 0){
@@ -43,8 +43,8 @@ void execute_pipe(cmdLine* cmd){
     }
     else{ //chid 1
         close(pipefd[0]);
-        dup2(pipefd[1],1);
         close(1);
+        dup(pipefd[1]);
         close(pipefd[1]);
         if (execvp(cmd->arguments[0], cmd->arguments) < 0){
             perror("Error");
