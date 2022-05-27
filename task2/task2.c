@@ -16,17 +16,17 @@ void execute_pipe(cmdLine* cmd){
     int pid2;
     pid1 = fork();
     if (pid1){
-        close(pipefd[1]);
+        //close(pipefd[1]); // why is doesn't work without it????
         pid2 = fork();
         if (pid2){
+            close(pipefd[0]);
+            close(pipefd[1]);
             if(cmd -> blocking){
                 waitpid(pid1, &status, WUNTRACED);
             }
             if(cmd->next->blocking){
                 waitpid(pid2, &status, WUNTRACED);
             }
-            close(pipefd[0]);
-            close(pipefd[1]);
         }
         else{
             //child 2 - read from child 1, writes to output
