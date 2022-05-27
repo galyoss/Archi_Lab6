@@ -21,6 +21,7 @@ int execute_pipe(cmdLine* cmd){
         if (pid2){
             waitpid(pid1, &status, (1 - cmd->blocking) | WUNTRACED);
             waitpid(pid2, &status, (1 - cmd->blocking) | WUNTRACED);
+            return status;
         }
         else{
             //child 2 - read from child 1, writes to output
@@ -37,13 +38,14 @@ int execute_pipe(cmdLine* cmd){
     }
     else{ //chid 1
         close(pipefd[0]);
-        dup(pipefd[1]);
+        dup2(pipefd[1],1);
         close(pipefd[1]);
         if (execvp(cmd->arguments[0], cmd->arguments) < 0){
             perror("Error");
             _exit(1);
         }
     }
+
 }
 
 int execute_single(struct cmdLine* cmd){
