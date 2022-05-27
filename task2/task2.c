@@ -38,7 +38,7 @@ int execute_pipe(cmdLine* cmd){
     else{ //chid 1
         close(pipefd[0]);
         dup(pipefd[1]);
-        close(pipedf[1]);
+        close(pipefd[1]);
         if (execvp(cmd->arguments[0], cmd->arguments) < 0){
             perror("Error");
             _exit(1);
@@ -58,21 +58,21 @@ int execute_single(struct cmdLine* cmd){
     pid = fork();
     if(pid > 0){  //parent
         if(debug){
-            fprintf(stderr, "PID num: %d, Executing command: %s\n", pid, cmd_line->arguments[0]);
+            fprintf(stderr, "PID num: %d, Executing command: %s\n", pid, cmd->arguments[0]);
         }
         waitpid(pid, &status, (1 - cmd_line->blocking) | WUNTRACED);
-        freeCmdLines(cmd_line);
+        freeCmdLines(cmd);
         return status;
     } else {  //child
-        if(cmd_line->inputRedirect){
+        if(cmd->inputRedirect){
             close(STDIN_FILENO);
-            fopen(cmd_line->inputRedirect, "r");
+            fopen(cmd->inputRedirect, "r");
         }
-        if(cmd_line->outputRedirect){
+        if(cmd->outputRedirect){
             close(STDOUT_FILENO);
-            fopen(cmd_line->outputRedirect, "w");
+            fopen(cmd->outputRedirect, "w");
         }
-        if(execvp(cmd_line->arguments[0], cmd_line->arguments) < 0){
+        if(execvp(cmd->arguments[0], cmd->arguments) < 0){
             perror("error\n");
             _exit(1);
         }
