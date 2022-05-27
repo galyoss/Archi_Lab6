@@ -8,7 +8,7 @@
 #define BUFFER_SIZE 2048
 int debug = 0;
 
-int execute_pipe(cmdLine* cmd){
+void execute_pipe(cmdLine* cmd){
     int pipefd[2];
     int status;
     pipe(pipefd);
@@ -19,9 +19,13 @@ int execute_pipe(cmdLine* cmd){
     if (pid1){
         pid2 = fork();
         if (pid2){
-            waitpid(pid1, &status, (1 - cmd->blocking) | WUNTRACED);
-            waitpid(pid2, &status, (1 - cmd->blocking) | WUNTRACED);
-            return status;
+            close(pipefd[0]);
+            if(cmd_line -> blocking){
+                waitpid(pid1, &status1, WUNTRACED);
+            }
+            if(cmd_line->next->blocking){
+                waitpid(pid2, &status2, WUNTRACED);
+            }
         }
         else{
             //child 2 - read from child 1, writes to output
