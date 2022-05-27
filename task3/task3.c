@@ -59,9 +59,10 @@ int execute_pipe(struct cmdLine* cmd){
             /* child gets input from the previous command,
                 if it's not the first command */
             if(index != 0){
+                printf("%d", pipes[(index-1)][0]);
                 close(STDIN_FILENO);
                 if( dup(pipes[(index-1)][0]) < 0){
-                    perror("no bueno infile %d", pipes[(index-1)][0]);
+                    perror("no bueno infile");
                     _exit(1);
                 }
             }
