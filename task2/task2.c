@@ -24,8 +24,7 @@ void execute_pipe(cmdLine* cmd){
             if(cmd->next->blocking){
                 waitpid(pid2, &status, WUNTRACED);
             }
-            close(pipefd[0]);
-            close(pipefd[1]);
+
         }
         else{
             //child 2 - read from child 1, writes to output
