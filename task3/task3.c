@@ -50,6 +50,7 @@ int execute_pipe(struct cmdLine* cmd){
     int total_commands = count_commands(cmd);
     int** pipes = createPipes(total_commands-1);
     int index = 0;
+    int pid;
     while(cmd){
         pid = fork();
         if( pid == 0 ){
@@ -84,15 +85,16 @@ int execute_pipe(struct cmdLine* cmd){
         }
         close(pipes[index][0]);
         close(pipes[index][1]);
-        cmd = cmd->next
-        index++
+        cmd = cmd->next;
+        index++;
     }
 
     releasePipes(pipes, total_commands);
 }
 
+
 int execute_single(struct cmdLine* cmd){
-    if(!cmd_line) {
+    if(!cmd) {
         printf("Error");
         _exit(1);
     }
@@ -103,21 +105,21 @@ int execute_single(struct cmdLine* cmd){
     pid = fork();
     if(pid > 0){  //parent
         if(debug){
-            fprintf(stderr, "PID num: %d, Executing command: %s\n", pid, cmd_line->arguments[0]);
+            fprintf(stderr, "PID num: %d, Executing command: %s\n", pid, cmd->arguments[0]);
         }
-        waitpid(pid, &status, (1 - cmd_line->blocking) | WUNTRACED);
-        freeCmdLines(cmd_line);
+        waitpid(pid, &status, (1 - cmd->blocking) | WUNTRACED);
+        freeCmdLines(cmd);
         return status;
     } else {  //child
-        if(cmd_line->inputRedirect){
+        if(cmd->inputRedirect){
             close(STDIN_FILENO);
-            fopen(cmd_line->inputRedirect, "r");
+            fopen(cmd->inputRedirect, "r");
         }
-        if(cmd_line->outputRedirect){
+        if(cmd->outputRedirect){
             close(STDOUT_FILENO);
-            fopen(cmd_line->outputRedirect, "w");
+            fopen(cmd->outputRedirect, "w");
         }
-        if(execvp(cmd_line->arguments[0], cmd_line->arguments) < 0){
+        if(execvp(cmd->arguments[0], cmd->arguments) < 0){
             perror("error\n");
             _exit(1);
         }
@@ -125,6 +127,7 @@ int execute_single(struct cmdLine* cmd){
     }
 
 }
+
 
 int count_commands(cmdLine* cmnd){
     int counter = 0;
