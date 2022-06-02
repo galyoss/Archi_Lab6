@@ -43,36 +43,31 @@ int execute_pipe(struct cmdLine* command){
 
         //if not last command, duplicate output side in next pipe
         if(command->next){
-            close(1);
+            close(STDOUT_FILENO);
             if(dup(pipefds[index + 1]) < 0){
                 perror("dup2");
                 exit(1);
                 }
             
         }
-
-        // // if first command and input is redirected, handle
-        // if (index == 0 && command->inputRedirect) {
-        //     close(STDIN_FILENO);
-        //     fopen(command->inputRedirect, "r");
-        // }
-
-        // // if last command and output is redirected, handle
-        // if (!command->next && command->outputRedirect) {
-        //     close(STDOUT_FILENO);
-        //     fopen(command->outputRedirect, "w");
-        // }
-
+        else if(command->outputRedirect){
+            close(STDOUT_FILENO);
+            fopen(command->outputRedirect, "w");
+        }
 
         //if not first command, duplicate input side in prev pipe
-        if(index != 0 ){
+        if(index != 0){
             close(0);
             if(dup(pipefds[index-2]) < 0){
                 perror("dup2");///index-2 0 index+1 1
                 exit(1);
             }
-            
+        } 
+        else if (command->inputRedirect){
+            close(STDIN_FILENO);
+            fopen(command->inputRedirect, "r");
         }
+
 
         //close all non-used pipes
         for(i = 0; i < 2*numPipes; i++){
