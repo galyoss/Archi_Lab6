@@ -51,11 +51,11 @@ int execute_pipe(struct cmdLine* command){
             
         }
 
-        // if first command and input is redirected, handle
-        if (index == 0 && command->inputRedirect) {
-            close(STDIN_FILENO);
-            fopen(command->inputRedirect, "r");
-        }
+        // // if first command and input is redirected, handle
+        // if (index == 0 && command->inputRedirect) {
+        //     close(STDIN_FILENO);
+        //     fopen(command->inputRedirect, "r");
+        // }
 
         // // if last command and output is redirected, handle
         // if (!command->next && command->outputRedirect) {
