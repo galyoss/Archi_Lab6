@@ -42,20 +42,22 @@ int execute_pipe(struct cmdLine* command){
 
         //if not last command, duplicate output side in next pipe
         if(command->next){
-            if(dup2(pipefds[index + 1], 1) < 0){
+            close(1);
+            if(dup2(pipefds[index + 1]) < 0){
                 perror("dup2");
                 exit(1);
                 }
-            close(2);
+            
         }
 
         //if not first command, duplicate input side in prev pipe
         if(index != 0 ){
-            if(dup2(pipefds[index-2], 0) < 0){
+            close(0);
+            if(dup(pipefds[index-2]) < 0){
                 perror("dup2");///index-2 0 index+1 1
                 exit(1);
             }
-            close(1);
+            
         }
 
         //close all non-used pipes
