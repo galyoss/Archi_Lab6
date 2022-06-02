@@ -57,11 +57,11 @@ int execute_pipe(struct cmdLine* command){
             fopen(command->inputRedirect, "r");
         }
 
-        // if last command and output is redirected, handle
-        if (!command->next && command->outputRedirect) {
-            close(STDOUT_FILENO);
-            fopen(command->outputRedirect, "w");
-        }
+        // // if last command and output is redirected, handle
+        // if (!command->next && command->outputRedirect) {
+        //     close(STDOUT_FILENO);
+        //     fopen(command->outputRedirect, "w");
+        // }
 
 
         //if not first command, duplicate input side in prev pipe
