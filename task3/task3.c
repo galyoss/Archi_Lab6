@@ -37,53 +37,54 @@ int execute_pipe(struct cmdLine* command){
 
     int index = 0;
     while(command) {
-    pid = fork();
-    if(pid == 0) {
+        pid = fork();
+        if(pid == 0) {
 
-    //if not last command, duplicate output side in next pipe
-    if(command->next){
-    if(dup2(pipefds[index + 1], 1) < 0){
-    perror("dup2");
-    exit(1);
-    }
-    }
+        //if not last command, duplicate output side in next pipe
+        if(command->next){
+            if(dup2(pipefds[index + 1], 1) < 0){
+                perror("dup2");
+                exit(1);
+                }
+        }
 
-    //if not first command, duplicate input side in prev pipe
-    if(index != 0 ){
-        if(dup2(pipefds[index-2], 0) < 0){
-    perror(" dup2");///index-2 0 index+1 1
-    exit(1);
+        //if not first command, duplicate input side in prev pipe
+        if(index != 0 ){
+            if(dup2(pipefds[index-2], 0) < 0){
+                perror(" dup2");///index-2 0 index+1 1
+                exit(1);
+            }
+        }
 
-    }
-    }
+        //close all non-used pipes
+        for(i = 0; i < 2*numPipes; i++){
+        close(pipefds[i]);
+        }
 
-    //close all non-used pipes
-    for(i = 0; i < 2*numPipes; i++){
-    close(pipefds[i]);
-    }
+        //execvp 
+        if( execvp(*command->arguments, command->arguments) < 0 ){
+            perror(*command->arguments);
+            exit(1);
+        }
+        }
+        
+        else if(pid < 0){
+        perror("error");
+        exit(1);
+        }
 
-    //execvp 
-    if( execvp(*command->arguments, command->arguments) < 0 ){
-    perror(*command->arguments);
-    exit(1);
+        command = command->next;
+        index+=2;
     }
-    } else if(pid < 0){
-    perror("error");
-    exit(1);
-    }
+        
+        /**Parent closes the pipes and wait for children*/
+        for(i = 0; i < 2 * numPipes; i++){
+        close(pipefds[i]);
+        }
 
-    //
-    command = command->next;
-    index+=2;
-    }
     
-    /**Parent closes the pipes and wait for children*/
-    for(i = 0; i < 2 * numPipes; i++){
-    close(pipefds[i]);
-    }
-
     for(i = 0; i < numPipes + 1; i++)
-    wait(&status);
+        wait(&status);
 }
 
 
