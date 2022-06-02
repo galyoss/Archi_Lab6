@@ -36,6 +36,7 @@ int execute_pipe(struct cmdLine* command){
 
 
     int index = 0;
+    int should_wait;
     while(command) {
         pid = fork();
         if(pid == 0) {
@@ -79,11 +80,16 @@ int execute_pipe(struct cmdLine* command){
 
         command = command->next;
         index+=2;
+
+        if (command->blocking)
+            should_wait = 1;
     }
         
-        /**Parent closes the pipes and wait for children*/
-        for(i = 0; i < 2 * numPipes; i++){
-        close(pipefds[i]);
+        /**Parent closes the pipes and wait for children, if it should wait*/
+        if (should_wait){
+            for(i = 0; i < 2 * numPipes; i++){
+            close(pipefds[i]);
+            }
         }
 
     
