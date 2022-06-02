@@ -43,7 +43,7 @@ int execute_pipe(struct cmdLine* command){
         //if not last command, duplicate output side in next pipe
         if(command->next){
             close(1);
-            if(dup2(pipefds[index + 1]) < 0){
+            if(dup(pipefds[index + 1]) < 0){
                 perror("dup2");
                 exit(1);
                 }
